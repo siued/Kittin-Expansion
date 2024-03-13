@@ -31,6 +31,7 @@ class World:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
         self.clock = pygame.time.Clock()
+        print(COLORS)
 
     def setup_world(self):
         # Pygame setup
