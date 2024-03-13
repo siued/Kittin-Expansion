@@ -1,92 +1,67 @@
-"""
-In short:
-One static body:
-    + One fixture: big polygon to represent the ground
-Two dynamic bodies:
-    + One fixture: a polygon
-    + One fixture: a circle
-And some drawing code that extends the shape classes.
-"""
 import pygame
-import kittin_shapes
+import Box2D
+from Box2D import (b2World, b2PolygonShape, b2CircleShape, b2_staticBody, b2_dynamicBody)
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 
-import Box2D  # The main library
-# Box2D.b2 maps Box2D.b2Vec2 to vec2 (and so on)
-from Box2D import (b2World, b2PolygonShape, b2CircleShape, b2_staticBody, b2_dynamicBody)
-
-# --- constants ---
-# Box2D deals with meters, but we want to display pixels,
-# so define a conversion factor:
-PPM = 20.0  # pixels per meter
+# Constants
+PPM = 30.0  # pixels per meter
 TARGET_FPS = 60
 TIME_STEP = 1.0 / TARGET_FPS
 SCREEN_WIDTH, SCREEN_HEIGHT = 480, 640
 
-# --- pygame setup ---
+# Pygame setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
-pygame.display.set_caption('Kittin Generator 3000')
+pygame.display.set_caption('L Shape Body')
 clock = pygame.time.Clock()
 
-# --- pybox2d world setup ---
-# Create the world
-world = b2World(gravity=(0, -10), doSleep=True)
+# Box2D world setup
+world = Box2D.b2World(gravity=(0, -10), doSleep=True)
 
 # And a static body to hold the ground shape
-ground_body = world.CreateStaticBody(
+world.CreateStaticBody(
     position=(0, 0),
-    shapes=b2PolygonShape(box=(50, 1)),
+    shapes=Box2D.b2PolygonShape(box=(50, 1)),
 )
 
-# Create a couple dynamic bodies
-body = world.CreateDynamicBody(position=(20, 45))
-circle = body.CreateCircleFixture(radius=0.5, density=1, friction=0.3)
+# Create L-shaped body
+l_body = world.CreateDynamicBody(position=(10, 20))
 
-body = world.CreateDynamicBody(position=(10, 45), angle=15)
-box = body.CreatePolygonFixture(box=(2, 1), density=1, friction=0.3)
+# Create two polygon fixtures for the L shape
+l_shape1 = b2PolygonShape(vertices=[(0, 0), (1, 0), (1, 1), (1, 2), (0, 2)])
+l_shape2 = b2PolygonShape(vertices=[(1, 0), (1, 1), (2, 1), (2, 0)])
 
+l_body.CreateFixture(shape=l_shape1, density=1, friction=0.3)
+l_body.CreateFixture(shape=l_shape2, density=1, friction=0.3)
+
+
+# Create L-shaped body
+l_body2 = world.CreateDynamicBody(position=(11, 30))
+
+l_body2.CreateFixture(shape=l_shape1, density=1, friction=0.3)
+l_body2.CreateFixture(shape=l_shape2, density=1, friction=0.3)
+
+# Colors
 colors = {
     b2_staticBody: (70, 70, 70, 255),
     b2_dynamicBody: (127, 127, 127, 255),
 }
 
-WHITE = (255, 255, 255, 255)
-BLACK = (0, 0, 0, 255)
-
-# Let's play with extending the shape classes to draw for us.
-
-
-def my_draw_polygon(polygon, body, fixture):
-    vertices = [(body.transform * v) * PPM for v in polygon.vertices]
-    vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
-    pygame.draw.polygon(screen, colors[body.type], vertices)
-b2PolygonShape.draw = my_draw_polygon
-
-
-def my_draw_circle(circle, body, fixture):
-    position = body.transform * circle.pos * PPM
-    position = (position[0], SCREEN_HEIGHT - position[1])
-    pygame.draw.circle(screen, colors[body.type], [int(
-        x) for x in position], int(circle.radius * PPM))
-    # Note: Python 3.x will enforce that pygame get the integers it requests,
-    #       and it will not convert from float.
-b2CircleShape.draw = my_draw_circle
-
-# --- main game loop ---
-
+# Main game loop
 running = True
 while running:
-    # Check the event queue
     for event in pygame.event.get():
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-            # The user closed the window or pressed escape
             running = False
 
-    screen.fill(BLACK)
+    screen.fill((0, 0, 0, 255))
+
     # Draw the world
     for body in world.bodies:
         for fixture in body.fixtures:
-            fixture.shape.draw(body, fixture)
+            shape = fixture.shape
+            vertices = [(body.transform * v) * PPM for v in shape.vertices]
+            vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
+            pygame.draw.polygon(screen, colors[body.type], vertices)
 
     # Make Box2D simulate the physics of our world for one step.
     world.Step(TIME_STEP, 10, 10)
