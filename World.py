@@ -15,7 +15,6 @@ COLORS = {
 
 
 class World:
-
     screen = None
     clock = None
     world = None
@@ -31,7 +30,6 @@ class World:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
         self.clock = pygame.time.Clock()
-        print(COLORS)
 
     def setup_world(self):
         # Pygame setup
@@ -45,8 +43,6 @@ class World:
             position=(0, 0),
             shapes=Box2D.b2PolygonShape(box=(50, 1)),
         )
-
-        # Main game loop
 
     def start_game(self):
         running = True
