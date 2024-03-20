@@ -1,14 +1,13 @@
-import numpy as np
 import pygame
 
-import World
+import Game
 import Shapes
 
 if __name__ == "__main__":
     pygame.init()
-    world = World.World()
+    game = Game.Game()
 
-    shapes = Shapes.Shapes(world.screen, world)
+    shapes = Shapes.Shapes(game.screen, game)
     shape = shapes.add_shapes()
 
-    world.start_game()
+    game.start_game()
