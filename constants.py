@@ -9,8 +9,13 @@ TARGET_FPS = 300
 TIME_STEP = 1.0 / 60
 
 COLORS = {
-    b2_staticBody: (70, 70, 70, 255),
-    b2_dynamicBody: (127, 127, 127, 255),
+    'GRAY': (70, 70, 70, 255),
+    'YELLOW': (255, 216, 43, 255),
+    'RED': (170, 51, 44, 255),
+    'PINK': (255, 110, 162, 255),
+    'GREEN': (20, 212, 184, 255),
+    'BLUE': (26, 140, 232, 255),
+    'ORANGE': (242, 117, 48, 255)
 }
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 480, 640
