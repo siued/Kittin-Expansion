@@ -1,12 +1,12 @@
 import numpy as np
 from .vertices import get_red, get_yellow, get_green, get_blue, get_pink, get_orange
 from .kittin import Kittin
+from ..constants import KITTIN_SCALING_FACTOR
 
 
 class ShapeGenerator:
     FLIP_CHANCE = 0.5
     ANGLES = [0, 90, 180, 270]
-    SCALING_FACTOR = 0.33
     VERTICES_FUNCS = [
         (get_red, 'RED'),
         (get_yellow, 'YELLOW'),
@@ -28,7 +28,7 @@ class ShapeGenerator:
         color = self.VERTICES_FUNCS[index][1]
 
         kittin = Kittin(vertices, angle, color)
-        kittin.scale_shape(self.SCALING_FACTOR)
+        kittin.scale_shape(KITTIN_SCALING_FACTOR)
         if np.random.rand() < self.FLIP_CHANCE:
             kittin.flip_shape()
 

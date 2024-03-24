@@ -10,7 +10,7 @@ angles don't match very well to pi, we can use 3.14 for pi or just check if angl
 
 ### To Do
 - [ ] make the ears be ears
-- [ ] add docstrings to the world manager
+- [ ] add docstrings and typing to the world manager
 - [ ] add docstrings to the constants
 - [ ] refactor game.py
-- [ ] add docstrings to the game
+- [ ] add docstrings and typing to the game
