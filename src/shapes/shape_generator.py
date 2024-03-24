@@ -1,6 +1,6 @@
 import numpy as np
-from src.vertices import *
-from src.shapes import Kittin
+from .vertices import get_red, get_yellow, get_green, get_blue, get_pink, get_orange
+from .kittin import Kittin
 
 
 class ShapeGenerator:
