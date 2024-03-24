@@ -1,10 +1,10 @@
 import pygame
 import Box2D
 
-from button import Button
+from src.button import Button
 from src.shapes import Kittin
 from src.shapes import ShapeGenerator
-from constants import *
+from src.constants import *
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
 

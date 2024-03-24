@@ -1,5 +1,5 @@
 import numpy as np
-from vertices import *
+from src.vertices import *
 from src.shapes import Kittin
 
 
