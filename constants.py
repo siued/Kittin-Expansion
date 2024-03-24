@@ -19,3 +19,4 @@ COLORS = {
 }
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 480, 640
+GAME_TITLE = 'Kittin Expansion 3000'

@@ -1,6 +1,6 @@
 import numpy as np
 from vertices import *
-from kittin_shapes.kittin import Kittin
+from src.shapes import Kittin
 
 
 class ShapeGenerator:

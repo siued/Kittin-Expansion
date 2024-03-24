@@ -2,8 +2,8 @@ import pygame
 import Box2D
 
 from button import Button
-from kittin_shapes.kittin import Kittin
-from kittin_shapes.shape_generator import ShapeGenerator
+from src.shapes import Kittin
+from src.shapes import ShapeGenerator
 from constants import *
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
@@ -15,6 +15,7 @@ class Game:
     shapes = None
     button = Button()
     running = True
+    shape_generator = ShapeGenerator()
 
     draw_colors = {}
 
@@ -29,10 +30,9 @@ class Game:
 
     def setup_world(self):
         # Pygame setup
-        pygame.display.set_caption('Kittin Expansion 3000')
+        pygame.display.set_caption(GAME_TITLE)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
         self.clock = pygame.time.Clock()
-        self.shape_generator = ShapeGenerator()
 
         # Box2D world setup
         self.world = Box2D.b2World(gravity=(0, -10), doSleep=True)
