@@ -1,11 +1,9 @@
-import math
-from typing import List, Tuple
-
 import pygame
 import Box2D
 
 from button import Button
-from shape_generator import ShapeGenerator
+from kittin_shapes.kittin import Kittin
+from kittin_shapes.shape_generator import ShapeGenerator
 from constants import *
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
@@ -34,7 +32,7 @@ class Game:
         pygame.display.set_caption('Kittin Expansion 3000')
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
         self.clock = pygame.time.Clock()
-        self.shape_generator = ShapeGenerator(self)
+        self.shape_generator = ShapeGenerator()
 
         # Box2D world setup
         self.world = Box2D.b2World(gravity=(0, -10), doSleep=True)
@@ -102,18 +100,18 @@ class Game:
     def stop_game(self):
         self.running = False
 
-    def add_shape_to_world(self, vertices: List[List[Tuple[float, float]]], x, y, angle_rad: float ,color: Tuple[int, int, int, int]):
-        body = self.world.CreateDynamicBody(position=(x, y))
-        for vert in vertices:
+    def add_shape_to_world(self, kittin: Kittin):
+        body = self.world.CreateDynamicBody(position=(10, 20))
+        for vert in kittin.vertices:
             shape = Box2D.b2PolygonShape(vertices=vert)
             body.CreateFixture(shape=shape, density=1, friction=0.3)
-        body.angle = angle_rad
-        self.draw_colors[body] = COLORS[color]
+        body.angle = kittin.angle
+        self.draw_colors[body] = COLORS[kittin.color]
         return body
     
     def button_pressed(self):
         # self.remove_all_shapes()
-        self.add_shape_to_world(*self.shape_generator.get_shapes())
+        self.add_shape_to_world(self.shape_generator.get_random_kittin_shape())
     
     def remove_all_shapes(self):
         for body in self.world.bodies:
