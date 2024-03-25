@@ -45,7 +45,7 @@ class WorldManager:
 
     def refresh_screen(self):
         pygame.display.flip()
-        self.__clock.tick(TARGET_FPS)
+        self.__clock.tick(TIME_MULTIPLIER * TARGET_FPS)
 
     def add_kittin_to_world(self, position, kittin: Kittin):
         body = self.__world.CreateDynamicBody(position=position)
