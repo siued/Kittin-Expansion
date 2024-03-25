@@ -3,7 +3,6 @@ from typing import Tuple, List, Dict
 import Box2D
 import pygame
 
-from src.button import Button
 from src.constants import *
 from src.shapes import Kittin
 
@@ -11,8 +10,6 @@ from src.shapes import Kittin
 class WorldManager:
     def __init__(self):
         self.__world = Box2D.b2World(gravity=(0, -10), doSleep=True)
-        self.__screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), depth=BIT_COLOR_DEPTH)
-        self.__clock = pygame.time.Clock()
         self.__body_colors_dict = {}
         self.__setup_walls()
 
@@ -42,22 +39,6 @@ class WorldManager:
         # Add right wall
         self.__create_wall((SCREEN_WIDTH / PPM, SCREEN_HEIGHT / PPM / 2), WALL_THICKNESS, SCREEN_HEIGHT / PPM)
 
-    def set_screen_background(self, color: List[int]):
-        """
-        Set the background color of the screen.
-        :param color:
-        :return:
-        """
-        self.__screen.fill(color)
-
-    def draw_button_on_screen(self, button: Button):
-        """
-        Draw a button on the screen.
-        :param button:
-        :return:
-        """
-        button.draw_button(self.__screen)
-
     def get_world_bodies(self) -> List[Box2D.b2Body]:
         """
         Get all the bodies in the world.
@@ -65,29 +46,27 @@ class WorldManager:
         """
         return self.__world.bodies
 
-    def draw_shape_on_screen(self, color: List[int], vertices: List[Tuple[float, float]]):
+    def get_drawable_objects(self) -> List[Tuple[List[Tuple[int, int]], Tuple[int, int, int, int]]]:
         """
-        Draw a shape on the screen.
-        :param color:
-        :param vertices:
-        :return:
+        Get all the objects that can be drawn on the screen.
+        :return: List of (vertex array, color) tuples
         """
-        pygame.draw.polygon(self.__screen, color, vertices)
+        objects = []
+        for body in self.get_world_bodies():
+            for fixture in body.fixtures:
+                shape = fixture.shape
+                vertices = [(body.transform * v) * PPM for v in shape.vertices]
+                vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
+                color = self.get_body_color(body)
+                objects.append((vertices, color))
+        return objects
 
-    def step_time(self):
+    def step_physics_time(self):
         """
         Take one step in time in the world.
         :return:
         """
         self.__world.Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS)
-
-    def refresh_screen(self):
-        """
-        Refresh the screen. The flip() function is called to update the contents displayed on the screen.
-        :return:
-        """
-        pygame.display.flip()
-        self.__clock.tick(TIME_MULTIPLIER * TARGET_FPS)
 
     def add_kittin_to_world(self, position: Tuple[int, int], kittin: Kittin) -> Box2D.b2Body:
         """
@@ -121,7 +100,7 @@ class WorldManager:
         """
         return {body: body.angle for body in self.__world.bodies if body.type == Box2D.b2_dynamicBody}
 
-    def get_body_color(self, body: Box2D.b2Body) -> List[int]:
+    def get_body_color(self, body: Box2D.b2Body) -> Tuple[int, int, int, int]:
         """
         Get the color of a body.
         :param body:

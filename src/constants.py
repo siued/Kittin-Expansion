@@ -16,7 +16,7 @@ TIME_STEP = 1.0 / TARGET_FPS
 This is the time step for the physics engine.
 """
 
-COLORS: Dict[str: Tuple[int, int, int, int]] = {
+COLORS: Dict[str, Tuple[int, int, int, int]] = {
     'GRAY': (70, 70, 70, 255),
     'BLACK': (0, 0, 0, 255),
     'YELLOW': (255, 216, 43, 255),

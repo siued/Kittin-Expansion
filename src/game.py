@@ -4,6 +4,7 @@ from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 from button import Button
 from constants import *
 from shapes import ShapeGenerator
+from screen import ScreenManager
 from world import WorldManager
 
 
@@ -13,6 +14,8 @@ class Game:
     running = True
     shape_generator = ShapeGenerator()
     world_manager = WorldManager()
+    screen_manager = ScreenManager()
+    __clock = pygame.time.Clock()
 
     draw_colors = {}
 
@@ -28,34 +31,28 @@ class Game:
         pygame.display.set_caption(GAME_TITLE)
 
     def start_game(self):
-        old_angles = self.world_manager.get_body_angles()
         while self.running:
-            new_angles = self.world_manager.get_body_angles()
-            if self.angle_changed(old_angles, new_angles):
-                print("Alive")
             self.tick_game()
-            old_angles = new_angles
 
         pygame.quit()
 
     def tick_game(self):
         self.handle_events()
 
-        self.world_manager.set_screen_background(COLORS['BLACK'])
+        self.screen_manager.set_screen_background(COLORS['BLACK'])
 
-        self.world_manager.draw_button_on_screen(self.button)
+        self.screen_manager.draw_button(self.button)
 
         # Draw the world
-        for body in self.world_manager.get_world_bodies():
-            for fixture in body.fixtures:
-                shape = fixture.shape
-                vertices = [(body.transform * v) * PPM for v in shape.vertices]
-                vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
-                color = self.world_manager.get_body_color(body)
-                self.world_manager.draw_shape_on_screen(color, vertices)
+        objects = self.world_manager.get_drawable_objects()
+        self.screen_manager.draw_objects(objects)
 
-        self.world_manager.step_time()
-        self.world_manager.refresh_screen()
+        self.step_time()
+        self.screen_manager.refresh_screen()
+
+    def step_time(self):
+        self.world_manager.step_physics_time()
+        self.__clock.tick(TIME_MULTIPLIER * TARGET_FPS)
 
     def handle_events(self):
         for event in pygame.event.get():
