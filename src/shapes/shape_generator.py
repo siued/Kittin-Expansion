@@ -1,7 +1,7 @@
 import numpy as np
 from .vertices import get_red, get_yellow, get_green, get_blue, get_pink, get_orange
 from .kittin import Kittin
-from ..constants import KITTIN_SCALING_FACTOR
+from src.constants import KITTIN_SCALING_FACTOR
 
 
 class ShapeGenerator:
