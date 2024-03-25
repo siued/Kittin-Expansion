@@ -123,3 +123,12 @@ class WorldManager:
         :return: List[int]
         """
         return self.__body_colors_dict[body]
+
+    def angle_changed(self, old_angles, new_angles):
+        """
+        Check if any angles have changed between the two angle arrays
+        :param old_angles:
+        :param new_angles:
+        :return:
+        """
+        return [body for body in old_angles if old_angles[body] != new_angles[body]]
