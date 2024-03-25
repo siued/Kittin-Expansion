@@ -65,7 +65,7 @@ interactions. Higher values will make the physics engine more accurate, but will
 
 GAME_TITLE = 'Kittin Expansion 9000'
 
-KITTIN_FRICTION = 0.3
+KITTIN_FRICTION = 0.15
 """
 Friction of the kittin objects.
 """

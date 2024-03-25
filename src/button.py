@@ -22,14 +22,3 @@ class Button:
 
     def get_dims(self):
         return self.x, self.y, self.width, self.height
-
-    def draw_button(self, screen):
-        button_x, button_y, button_width, button_height = self.get_dims()
-
-        pygame.draw.rect(screen, COLORS[self.color], (button_x, button_y, button_width, button_height))
-
-        # Add text to the button
-        font = pygame.font.Font(None, self.font_size)
-        text = font.render(self.text, True, COLORS['BLACK'])
-        text_rect = text.get_rect(center=(button_x + button_width // 2, button_y + button_height // 2))
-        screen.blit(text, text_rect)

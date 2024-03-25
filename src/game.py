@@ -47,8 +47,8 @@ class Game:
         objects = self.world_manager.get_drawable_objects()
         self.screen_manager.draw_objects(objects)
 
-        self.step_time()
         self.screen_manager.refresh_screen()
+        self.step_time()
 
     def step_time(self):
         self.world_manager.step_physics_time()
