@@ -1,4 +1,9 @@
+from collections import deque
+from typing import List
+
+import numpy as np
 import pygame
+from Box2D import Box2D
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
 from button import Button
@@ -31,7 +36,26 @@ class Game:
         pygame.display.set_caption(GAME_TITLE)
 
     def start_game(self):
+        body_past_velocities = {}
         while self.running:
+            body_velocity_dict = self.world_manager.get_body_velocities()
+            # add these velocities to the body_past_velocities in order to keep the last 5 velocities
+            for body in body_velocity_dict:
+                if body not in body_past_velocities:
+                    body_past_velocities[body] = deque(maxlen=10)
+                x, y = body_velocity_dict[body]
+                body_past_velocities[body].append((x, y))
+
+            # check for any bodies that are not moving
+            for body in body_velocity_dict:
+                # check if all the past 5 velocities are less than epsilon
+                if all([np.linalg.norm(velocity) < VELOCITY_EPSILON for velocity in body_past_velocities[body]]):
+                    if (abs(np.degrees(body.angle) + DEGREE_EPSILON) % 90) > 2 * DEGREE_EPSILON:
+                        print("Body deleted")
+                        print(np.degrees(body.angle))
+                        print(abs(np.degrees(body.angle) + DEGREE_EPSILON) % 90)
+                        self.world_manager.remove_body(body)
+
             self.tick_game()
 
         pygame.quit()
@@ -68,7 +92,7 @@ class Game:
         self.running = False
 
     def button_pressed(self):
-        self.world_manager.remove_all_dynamic_shapes_from_world()
+        # self.world_manager.remove_all_dynamic_shapes_from_world()
         self.world_manager.add_kittin_to_world(KITTIN_SPAWN_POSITION, self.shape_generator.get_random_kittin_shape())
 
     def angle_changed(self, old_angles, new_angles):

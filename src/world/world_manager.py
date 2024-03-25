@@ -93,6 +93,22 @@ class WorldManager:
                 self.__body_colors_dict.pop(body)
                 self.__world.DestroyBody(body)
 
+    def remove_body(self, body: Box2D.b2Body):
+        """
+        Remove a body from the world.
+        :param body:
+        :return:
+        """
+        self.__body_colors_dict.pop(body)
+        self.__world.DestroyBody(body)
+
+    def get_body_velocities(self) -> Dict[Box2D.b2Body, Tuple[float, float]]:
+        """
+        Get the velocities of all the dynamic bodies in the world.
+        :return: Dict[Box2D.b2Body, Tuple[float, float]]
+        """
+        return {body: body.linearVelocity for body in self.__world.bodies if body.type == Box2D.b2_dynamicBody}
+
     def get_body_angles(self) -> Dict[Box2D.b2Body, float]:
         """
         Get the angles of all the dynamic bodies in the world.

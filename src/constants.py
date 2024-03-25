@@ -80,4 +80,14 @@ KITTIN_SCALING_FACTOR = 0.33
 Scaling factor for the kittin objects.
 """
 
+VELOCITY_EPSILON = 0.0001
+"""
+A small value used to compare floating point numbers.
+"""
+
+DEGREE_EPSILON = 1
+"""
+A small value used to compare floating point numbers.
+"""
+
 KITTIN_SPAWN_POSITION = (10, 20)
