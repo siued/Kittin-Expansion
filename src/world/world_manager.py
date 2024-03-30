@@ -1,7 +1,8 @@
 from typing import Tuple, List, Dict
+from collections import deque
 
 import Box2D
-import pygame
+import numpy as np
 
 from src.constants import *
 from src.shapes import Kittin
@@ -11,6 +12,7 @@ class WorldManager:
     def __init__(self):
         self.__world = Box2D.b2World(gravity=(0, -10), doSleep=True)
         self.__body_colors_dict = {}
+        self.__body_past_velocities = {}
         self.__setup_walls()
 
     def __create_wall(self, position: Tuple[int, int], width: int, height: int):
@@ -23,7 +25,7 @@ class WorldManager:
         """
         body = self.__world.CreateStaticBody(
             position=position,
-            shapes=Box2D.b2PolygonShape(box=(width/2, height/2)),
+            shapes=Box2D.b2PolygonShape(box=(width / 2, height / 2)),
         )
         self.__body_colors_dict[body] = COLORS['GRAY']
 
@@ -61,12 +63,12 @@ class WorldManager:
                 objects.append((vertices, color))
         return objects
 
-    def step_physics_time(self):
+    def step_physics_time(self, time_multiplier=TIME_MULTIPLIER):
         """
         Take one step in time in the world.
         :return:
         """
-        self.__world.Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS)
+        self.__world.Step(TIME_STEP * time_multiplier, VELOCITY_ITERATIONS, POSITION_ITERATIONS)
 
     def add_kittin_to_world(self, position: Tuple[int, int], kittin: Kittin) -> Box2D.b2Body:
         """
@@ -132,3 +134,47 @@ class WorldManager:
         :return:
         """
         return [body for body in old_angles if old_angles[body] != new_angles[body]]
+
+    def all_bodies_are_stationary(self) -> bool:
+        """
+        Check if all the bodies in the world are stationary.
+        :return: bool
+        """
+        body_velocity_dict = self.get_body_velocities()
+        # add these velocities to the body_past_velocities in order to keep the last 5 velocities
+        for body in body_velocity_dict:
+            if body not in self.__body_past_velocities:
+                self.__body_past_velocities[body] = deque(maxlen=10)
+            x, y = body_velocity_dict[body]
+            self.__body_past_velocities[body].append((x, y))
+        for body in body_velocity_dict:
+            # check if all the past 5 velocities are less than epsilon
+            if not all([np.linalg.norm(velocity) < VELOCITY_EPSILON for velocity in self.__body_past_velocities[body]]):
+                return False
+        return True
+
+    def remove_unaligned_bodies(self):  # TODO: type this
+        body_velocity_dict = self.get_body_velocities()
+        # add these velocities to the body_past_velocities in order to keep the last 5 velocities
+        for body in body_velocity_dict:
+            if body not in self.__body_past_velocities:
+                self.__body_past_velocities[body] = deque(maxlen=10)
+            x, y = body_velocity_dict[body]
+            self.__body_past_velocities[body].append((x, y))
+
+        # check for any bodies that are not moving
+        for body in body_velocity_dict:
+            # check if all the past 5 velocities are less than epsilon
+            if all([np.linalg.norm(velocity) < VELOCITY_EPSILON for velocity in self.__body_past_velocities[body]]):
+                if (abs((np.degrees(body.angle)) + DEGREE_EPSILON) % 90) > 2 * DEGREE_EPSILON:
+                    print("Body deleted")
+                    print(np.degrees(body.angle))
+                    print(abs((np.degrees(body.angle)) + DEGREE_EPSILON) % 90)
+                    self.remove_body(body)
+
+    def get_num_dynamic_shapes(self) -> int:
+        """
+        Get the number of dynamic shapes in the world.
+        :return: int
+        """
+        return len([body for body in self.get_world_bodies() if body.type == Box2D.b2_dynamicBody])

@@ -30,7 +30,7 @@ COLORS: Dict[str, Tuple[int, int, int, int]] = {
 Colors for objects. 
 """
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 480, 640
+SCREEN_WIDTH, SCREEN_HEIGHT = 400, 640
 """
 Screen size in pixels.
 """
@@ -51,13 +51,13 @@ BIT_COLOR_DEPTH = 32
 Display color depth.
 """
 
-POSITION_ITERATIONS = 10
+POSITION_ITERATIONS = 40
 """
 This controls how accurately the physics engine calculates the positions of objects after collisions or other physical
 interactions. Higher values will make the physics engine more accurate, but will also make the game run slower.
 """
 
-VELOCITY_ITERATIONS = 10
+VELOCITY_ITERATIONS = 40
 """
 This controls how accurately the physics engine calculates the velocities of objects after collisions or other physical
 interactions. Higher values will make the physics engine more accurate, but will also make the game run slower.
@@ -90,4 +90,9 @@ DEGREE_EPSILON = 1
 A small value used to compare floating point numbers.
 """
 
-KITTIN_SPAWN_POSITION = (10, 20)
+NR_OF_KITTINS = 7
+"""
+Number of kittins to spawn.
+"""
+
+KITTIN_SPAWN_POSITION = (SCREEN_WIDTH / PPM / 2, 20)
