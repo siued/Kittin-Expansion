@@ -48,19 +48,38 @@ class WorldManager:
         """
         return self.__world.bodies
 
-    def get_drawable_objects(self) -> List[Tuple[List[Tuple[int, int]], Tuple[int, int, int, int]]]:
+    def get_drawable_kittins(self) -> Tuple[List[Kittin], List[Tuple[int, int]]]:
         """
         Get all the objects that can be drawn on the screen.
+        :return: List of (vertex array, color) tuples and List of (x, y) positions
+        """
+        kittins = []
+        positions = []
+        for body in self.get_world_bodies():
+            if body.type == Box2D.b2_dynamicBody:
+                for fixture in body.fixtures:
+                    shape = fixture.shape
+                    vertices = [(body.transform * v) * PPM for v in shape.vertices]
+                    vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
+                    color = self.get_body_color(body)
+                    kittins.append(Kittin(vertices, body.angle, color))
+                    positions.append((body.position.x * PPM, SCREEN_HEIGHT - body.position.y * PPM))
+        return kittins, positions
+
+    def get_drawable_walls(self) -> Tuple[List[Tuple[List[Tuple[int, int]], Tuple[int, int, int, int]]]]:
+        """
+        Get all the walls that can be drawn on the screen.
         :return: List of (vertex array, color) tuples
         """
         objects = []
         for body in self.get_world_bodies():
-            for fixture in body.fixtures:
-                shape = fixture.shape
-                vertices = [(body.transform * v) * PPM for v in shape.vertices]
-                vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
-                color = self.get_body_color(body)
-                objects.append((vertices, color))
+            if body.type == Box2D.b2_staticBody:
+                for fixture in body.fixtures:
+                    shape = fixture.shape
+                    vertices = [(body.transform * v) * PPM for v in shape.vertices]
+                    vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
+                    color = self.get_body_color(body)
+                    objects.append((vertices, color))
         return objects
 
     def step_physics_time(self, time_multiplier=TIME_MULTIPLIER):
@@ -82,7 +101,7 @@ class WorldManager:
             shape = Box2D.b2PolygonShape(vertices=vert)
             body.CreateFixture(shape=shape, density=KITTIN_DENSITY, friction=KITTIN_FRICTION)
         body.angle = kittin.angle
-        self.__body_colors_dict[body] = COLORS[kittin.color]
+        self.__body_colors_dict[body] = kittin.color
         return body
 
     def remove_all_dynamic_shapes_from_world(self):

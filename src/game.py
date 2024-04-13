@@ -9,6 +9,7 @@ from button import Button
 from constants import *
 from shapes import ShapeGenerator
 from screen import ScreenManager
+from src.shapes import Kittin
 from world import WorldManager
 
 
@@ -65,8 +66,12 @@ class Game:
 
         self.screen_manager.draw_button(self.button)
 
-        objects = self.world_manager.get_drawable_objects()
-        self.screen_manager.draw_objects(objects)
+        kittins, positions = self.world_manager.get_drawable_kittins()
+        self.screen_manager.draw_kittins(kittins, positions)
+
+        walls = self.world_manager.get_drawable_walls()
+        self.screen_manager.draw_walls(walls)
+
 
         self.screen_manager.refresh_screen()
         self.step_time()
@@ -112,16 +117,10 @@ class Game:
         # self.world_manager.add_kittin_to_world((x, 15), self.shape_generator.get_random_kittin_shape())
 
         while True:
-            self.handle_events()
             if self.world_manager.all_bodies_are_stationary():
                 x = int(np.random.uniform(2, SCREEN_WIDTH / PPM - 2))
                 self.world_manager.add_kittin_to_world((x, 15),  self.shape_generator.get_random_kittin_shape())
-            self.screen_manager.set_screen_background(COLORS['BLACK'])
-            objects = self.world_manager.get_drawable_objects()
-            self.screen_manager.draw_objects(objects)
-            self.screen_manager.refresh_screen()
-            self.step_time()
+            self.tick_game()
             self.world_manager.remove_unaligned_bodies()
             if self.world_manager.all_bodies_are_stationary() and self.world_manager.get_num_dynamic_shapes() >= NR_OF_KITTINS:
                 break
-

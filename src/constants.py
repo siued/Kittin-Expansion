@@ -30,6 +30,11 @@ COLORS: Dict[str, Tuple[int, int, int, int]] = {
 Colors for objects. 
 """
 
+KITTIN_COLORS = ['RED', 'YELLOW', 'GREEN', 'BLUE', 'PINK', 'ORANGE']
+"""
+Available colors for kittin objects.
+"""
+
 SCREEN_WIDTH, SCREEN_HEIGHT = 400, 640
 """
 Screen size in pixels.

@@ -3,6 +3,11 @@ from .vertices import get_red, get_yellow, get_green, get_blue, get_pink, get_or
 from .kittin import Kittin
 from src.constants import KITTIN_SCALING_FACTOR
 
+# replace this to seed the random number generator
+rng_seed = np.random.randint(0, 10000)
+np.random.seed(rng_seed)
+print(f"Seed used for random number generation: {rng_seed}")
+
 
 class ShapeGenerator:
     FLIP_CHANCE = 0.5

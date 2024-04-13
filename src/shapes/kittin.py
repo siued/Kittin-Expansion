@@ -15,6 +15,7 @@ class Kittin:
         The color of the shape.
     """
     vertices: List[List[Tuple[float, float]]]
+    center: Tuple[float, float]
     angle: float
     color: str
 
